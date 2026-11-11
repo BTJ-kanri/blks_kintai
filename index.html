@@ -15,7 +15,8 @@
 :root{
   --paper:#EEF1EF; --sheet:#FFFFFF; --ink:#1D2A36; --muted:#5D6A75; --line:#CDD5D2;
   --shu:#C13B2A;
-  --st-work:#2E6A4C; --st-absent:#8C2F3D; --st-late:#9A5A0C; --st-early:#355A8E; --on-tone:#FFFFFF;
+  --st-work:#2E6A4C; --st-absent:#8C2F3D; --st-late:#9A5A0C; --st-early:#355A8E; --st-out:#2C6468; --on-tone:#FFFFFF;
+  --ok-bg:#E6F1EA; --ng-bg:#F7E6E6;
   font-family:"Zen Kaku Gothic New","Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic UI","Meiryo",sans-serif;
   color-scheme:light;
 }
@@ -23,7 +24,8 @@
   :root{
     --paper:#131A1F; --sheet:#1B242B; --ink:#E6ECEA; --muted:#9BA7AF; --line:#33414B;
     --shu:#E5654F;
-    --st-work:#62B58A; --st-absent:#DA7584; --st-late:#E2A24C; --st-early:#82A3D8; --on-tone:#10171C;
+    --st-work:#62B58A; --st-absent:#DA7584; --st-late:#E2A24C; --st-early:#82A3D8; --st-out:#6DB9BD; --on-tone:#10171C;
+    --ok-bg:#1D3328; --ng-bg:#3A2226;
     color-scheme:dark;
   }
 }
@@ -48,67 +50,92 @@ button,input,select,textarea{font:inherit;color:inherit}
 .top .brand{font-size:1.125rem}
 .who{display:flex;gap:14px;align-items:baseline;font-size:.875rem;color:var(--muted);flex-wrap:wrap}
 .who #userName{color:var(--ink);font-weight:700}
-.link{background:none;border:0;padding:0;color:var(--muted);text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.link{background:none;border:0;padding:0;color:var(--muted);text-decoration:underline;text-underline-offset:3px;cursor:pointer;font-size:.8125rem}
 
 .card{background:var(--sheet);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:16px}
 .card.loading{opacity:.55;pointer-events:none}
 
 /* 日付 */
-.datebar{display:flex;align-items:center;gap:6px;margin-bottom:22px}
+.datebar{display:flex;align-items:center;gap:6px;margin-bottom:16px}
 .nav{flex:none;width:40px;height:40px;border:1px solid var(--line);background:var(--sheet);border-radius:50%;font-size:1.25rem;line-height:1;cursor:pointer}
 .nav:disabled{opacity:.3;cursor:default}
-.date-pick{position:relative;flex:1;text-align:center;cursor:pointer;min-width:0}
+.date-pick{position:relative;flex:1;text-align:center;cursor:pointer;min-width:0;color:var(--ink)}
 .date-label{font-size:1.5rem;font-weight:900;font-variant-numeric:tabular-nums;letter-spacing:.02em;white-space:nowrap}
 .date-pick input{position:absolute;inset:0;opacity:0;width:100%;height:100%;cursor:pointer;border:0;padding:0}
 .today{flex:none;border:1px solid var(--line);background:none;border-radius:999px;padding:6px 12px;font-size:.8125rem;cursor:pointer}
 
-/* ステータス */
-.statuses{display:grid;grid-template-columns:1fr 1fr;gap:10px;position:relative;margin-bottom:20px}
-.st{--tone:var(--ink);display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;
-  padding:14px 14px 12px 16px;min-height:80px;border:1px solid var(--line);border-left:6px solid var(--tone);
-  border-radius:10px;background:var(--sheet);cursor:pointer;transition:background-color .15s,color .15s}
-.st b{font-size:1.375rem;font-weight:900;letter-spacing:.1em;line-height:1.3}
-.st span{font-size:.75rem;color:var(--muted)}
-.st[aria-pressed="true"]{background:var(--tone);border-color:var(--tone);color:var(--on-tone)}
-.st[aria-pressed="true"] span{color:inherit;opacity:.85}
-.st:disabled{opacity:.3;cursor:not-allowed}
 [data-tone="work"]{--tone:var(--st-work)}
 [data-tone="absent"]{--tone:var(--st-absent)}
 [data-tone="late"]{--tone:var(--st-late)}
 [data-tone="early"]{--tone:var(--st-early)}
+[data-tone="out"]{--tone:var(--st-out)}
 
-/* 確定印 */
-.stamp{position:absolute;right:-6px;top:-24px;width:90px;height:90px;border-radius:50%;
-  border:3px solid var(--shu);box-shadow:inset 0 0 0 3px var(--sheet),inset 0 0 0 5px var(--shu);
-  background:var(--sheet);color:var(--shu);display:flex;flex-direction:column;align-items:center;justify-content:center;
-  transform:rotate(-12deg);pointer-events:none;line-height:1.15;transition:opacity .2s}
-.stamp b{font-size:1.375rem;font-weight:900;letter-spacing:.12em;margin-left:.12em}
-.stamp small{font-size:.6875rem;font-weight:700;font-variant-numeric:tabular-nums;margin-top:3px}
-.stamp.stale{opacity:.3}
+/* その日の記録 */
+.daysum{position:relative;background:var(--paper);border-radius:10px;padding:12px 104px 12px 14px;margin-bottom:6px;min-height:92px}
+.ds{display:grid;grid-template-columns:auto 1fr;gap:0 10px;align-items:baseline}
+.ds + .ds{margin-top:8px}
+.tag{display:inline-block;font-size:.75rem;font-weight:700;color:var(--on-tone);background:var(--tone);border-radius:4px;padding:1px 7px;letter-spacing:.06em;white-space:nowrap}
+.ds-main{font-weight:700;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.ds-sub{grid-column:2;font-size:.75rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.stamp{position:absolute;right:10px;top:50%;width:80px;height:80px;margin-top:-40px;border-radius:50%;
+  border:3px solid var(--shu);box-shadow:inset 0 0 0 3px var(--paper),inset 0 0 0 5px var(--shu);
+  color:var(--shu);display:flex;flex-direction:column;align-items:center;justify-content:center;
+  transform:rotate(-12deg);pointer-events:none;line-height:1.15}
+.stamp b{font-size:1.2rem;font-weight:900;letter-spacing:.12em;margin-left:.12em}
+.stamp small{font-size:.625rem;font-weight:700;font-variant-numeric:tabular-nums;margin-top:2px}
 .stamp.pop{animation:stamp .3s cubic-bezier(.2,.9,.3,1.25)}
 @keyframes stamp{from{transform:rotate(-12deg) scale(1.9);opacity:0}to{transform:rotate(-12deg) scale(1);opacity:1}}
+.daymsg{font-size:.8125rem;color:var(--muted);background:var(--paper);border-radius:8px;padding:10px 12px;margin:6px 0 0}
+.daymsg:empty{display:none}
 
-/* 入力 */
+/* 出勤・退勤のパネル */
+.panel{border-top:1px solid var(--line);margin-top:16px;padding-top:14px}
+.ph{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.ph h2{font-size:1.0625rem;margin:0;font-weight:900;letter-spacing:.06em}
+.badge{font-size:.8125rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.badge.done{color:var(--ink);font-weight:700}
+.ph .link{margin-left:auto}
+.lock{font-size:.8125rem;color:var(--muted);margin:0}
+
+.statuses{display:grid;gap:8px;margin-bottom:14px}
+.statuses.three{grid-template-columns:repeat(3,1fr)}
+.statuses.two{grid-template-columns:repeat(2,1fr)}
+.st{display:flex;flex-direction:column;align-items:flex-start;gap:0;text-align:left;
+  padding:10px 10px 9px 12px;min-height:66px;border:1px solid var(--line);border-left:6px solid var(--tone);
+  border-radius:10px;background:var(--sheet);cursor:pointer;transition:background-color .15s,color .15s}
+.st b{font-size:1.25rem;font-weight:900;letter-spacing:.1em;line-height:1.3}
+.st span{font-size:.6875rem;color:var(--muted);line-height:1.4}
+.st[aria-pressed="true"]{background:var(--tone);border-color:var(--tone);color:var(--on-tone)}
+.st[aria-pressed="true"] span{color:inherit;opacity:.85}
+.st:disabled{opacity:.3;cursor:not-allowed}
+
 label{display:flex;flex-direction:column;gap:4px;font-size:.8125rem;color:var(--muted);font-weight:500}
-.lbl em{font-style:normal;font-size:.6875rem;margin-left:6px;opacity:.85}
-select,input,textarea{border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:var(--sheet);font-size:1rem;color:var(--ink);min-height:46px}
+.lbl{display:flex;align-items:center;gap:6px}
+.req{font-size:.6875rem;font-weight:700;color:#fff;background:var(--st-absent);border-radius:3px;padding:0 5px}
+.opt{font-size:.6875rem;opacity:.85}
+select,input,textarea{border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:var(--sheet);font-size:1rem;color:var(--ink);min-height:46px;width:100%}
 select{font-variant-numeric:tabular-nums}
-textarea{resize:vertical;line-height:1.5}
-.times{display:grid;grid-template-columns:1fr 1fr;gap:12px;transition:opacity .15s}
-.times.off{opacity:.35}
+textarea{resize:vertical;line-height:1.5;min-height:64px}
+.field{margin-bottom:12px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
 .worked{display:flex;flex-direction:column;justify-content:flex-end;gap:2px;padding-bottom:6px}
 .worked span{font-size:.8125rem;color:var(--muted)}
 .worked output{font-size:1.25rem;font-weight:900;font-variant-numeric:tabular-nums}
-.hint{font-size:.75rem;color:var(--muted);margin:8px 0 16px}
-.block{margin-bottom:12px}
+
+.geo{display:flex;gap:10px;align-items:flex-start;border-radius:8px;padding:10px 12px;margin:-4px 0 12px;font-size:.8125rem;background:var(--paper);color:var(--muted)}
+.geo .ic{flex:none;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:900;margin-top:1px;background:var(--line);color:var(--sheet)}
+.geo.ok{background:var(--ok-bg);color:var(--ink)} .geo.ok .ic{background:var(--st-work)}
+.geo.ng{background:var(--ng-bg);color:var(--ink)} .geo.ng .ic{background:var(--st-absent)}
+.geo.loading .ic{background:none;border:2px solid var(--line);border-top-color:var(--ink);animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.geo .gt{flex:1}
+.geo .link{white-space:nowrap}
 
 .primary{width:100%;border:0;border-radius:10px;background:var(--ink);color:var(--sheet);font-weight:700;font-size:1.0625rem;padding:15px;cursor:pointer;letter-spacing:.06em}
-.primary:disabled{opacity:.5;cursor:progress}
+.primary:disabled{opacity:.4;cursor:not-allowed}
 .secondary{border:1px solid var(--line);background:none;border-radius:10px;padding:12px 16px;cursor:pointer}
 .error{color:var(--st-absent);font-size:.875rem;margin:0 0 10px;font-weight:500}
 .error:empty{display:none}
-.state{font-size:.8125rem;color:var(--muted);text-align:center;margin:10px 0 0}
-.state.dirty{color:var(--st-late);font-weight:700}
 form label{margin-bottom:14px}
 
 /* 今月の稼働 */
@@ -116,13 +143,17 @@ form label{margin-bottom:14px}
 .hist-head h2{font-size:1.0625rem;margin:0}
 .summary{color:var(--muted);font-size:.8125rem;margin:10px 0 6px;font-variant-numeric:tabular-nums}
 .summary:empty{display:none}
+.summary span{display:inline-block;white-space:nowrap;margin-right:1em}
+.summary .warn{color:var(--st-absent);font-weight:700}
 .days{list-style:none;margin:8px 0 0;padding:0}
 .days li + li{border-top:1px solid var(--line)}
-.day{display:grid;grid-template-columns:5.6em 3.2em 1fr auto;align-items:center;gap:8px;width:100%;
-  background:none;border:0;padding:11px 4px;text-align:left;cursor:pointer;font-variant-numeric:tabular-nums;border-radius:6px}
+.day{display:grid;grid-template-columns:5.4em 4.6em 1fr auto;align-items:center;gap:8px;width:100%;
+  background:none;border:0;padding:10px 4px;text-align:left;cursor:pointer;font-variant-numeric:tabular-nums;border-radius:6px}
 .day[aria-current="date"]{background:var(--paper)}
-.chip{font-size:.8125rem;font-weight:700;color:var(--tone)}
-.day .t{color:var(--muted);font-size:.875rem}
+.chips{display:flex;flex-wrap:wrap;gap:3px}
+.chips .tag{font-size:.6875rem;padding:0 5px}
+.day .t{color:var(--muted);font-size:.8125rem;line-height:1.35}
+.day .t small{display:block;font-size:.6875rem}
 .day .w{font-weight:700}
 .empty{color:var(--muted);font-size:.875rem;padding:14px 0}
 
@@ -138,8 +169,9 @@ dialog h2{font-size:1.125rem;margin:0 0 16px}
 .toast.show{opacity:1;transform:translate(-50%,0)}
 
 @media (max-width:380px){
-  .st b{font-size:1.2rem} .date-label{font-size:1.25rem} .stamp{width:78px;height:78px} .stamp b{font-size:1.15rem}
-  .day{grid-template-columns:5.2em 3em 1fr auto;gap:6px}
+  .st b{font-size:1.1rem} .date-label{font-size:1.25rem}
+  .daysum{padding-right:92px} .stamp{width:70px;height:70px;margin-top:-35px} .stamp b{font-size:1.05rem}
+  .day{grid-template-columns:5em 4.2em 1fr auto;gap:6px}
 }
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
@@ -181,30 +213,59 @@ dialog h2{font-size:1.125rem;margin:0 0 16px}
       <button type="button" class="today" id="todayBtn">今日</button>
     </div>
 
-    <div class="statuses" role="group" aria-label="ステータス">
-      <button type="button" class="st" data-status="出勤" data-tone="work" aria-pressed="false"><b>出勤</b><span>予定どおり勤務</span></button>
-      <button type="button" class="st" data-status="欠勤" data-tone="absent" aria-pressed="false"><b>欠勤</b><span>終日お休み</span></button>
-      <button type="button" class="st" data-status="遅刻" data-tone="late" aria-pressed="false"><b>遅刻</b><span>開始が遅れる</span></button>
-      <button type="button" class="st" data-status="早退" data-tone="early" aria-pressed="false"><b>早退</b><span>早めに終了</span></button>
-      <div class="stamp" id="stamp" hidden aria-hidden="true"><b id="stampStatus"></b><small id="stampTime"></small></div>
+    <div class="daysum" id="daySum" hidden>
+      <div class="ds" id="dsIn"><span class="tag" id="dsInTag"></span><span class="ds-main" id="dsInMain"></span><span class="ds-sub" id="dsInSub"></span></div>
+      <div class="ds" id="dsOut"><span class="tag" id="dsOutTag"></span><span class="ds-main" id="dsOutMain"></span><span class="ds-sub" id="dsOutSub"></span></div>
+      <div class="stamp" id="stamp" aria-hidden="true"><b id="stampStatus"></b><small id="stampTime"></small></div>
+    </div>
+    <p class="daymsg" id="dayMsg"></p>
+
+    <!-- 出勤 -->
+    <div class="panel" id="inPanel">
+      <div class="ph"><h2>出勤</h2><span class="badge" id="inBadge"></span><button type="button" class="link" id="inEdit">修正する</button></div>
+      <div id="inBody">
+        <div class="statuses three" role="group" aria-label="出勤のステータス">
+          <button type="button" class="st" data-in="出勤" data-tone="work" aria-pressed="false"><b>出勤</b><span>予定どおり</span></button>
+          <button type="button" class="st" data-in="遅刻" data-tone="late" aria-pressed="false"><b>遅刻</b><span>開始が遅れた</span></button>
+          <button type="button" class="st" data-in="欠勤" data-tone="absent" aria-pressed="false"><b>欠勤</b><span>終日お休み</span></button>
+        </div>
+        <div id="inFields">
+          <label class="field">勤務場所<select id="place"></select></label>
+          <div class="geo" id="geo" role="status"><span class="ic" id="geoIc"></span><span class="gt" id="geoText"></span><button type="button" class="link" id="geoRetry">取得し直す</button></div>
+          <label class="field">出勤時刻<select id="start"></select></label>
+        </div>
+        <label class="field"><span class="lbl">理由・備考<span class="req" id="inReq">必須</span><span class="opt" id="inOpt">任意</span></span>
+          <textarea id="inNote" rows="2" placeholder="遅刻・欠勤の理由など"></textarea></label>
+        <p class="error" id="inError" role="alert"></p>
+        <button type="button" class="primary" id="inBtn">出勤を送信</button>
+      </div>
     </div>
 
-    <div class="times" id="timeFields">
-      <label>勤務開始<select id="start"></select></label>
-      <label>勤務終了<select id="end"></select></label>
-      <label>休憩<select id="breakMin"></select></label>
-      <div class="worked"><span>実働</span><output id="worked">—</output></div>
+    <!-- 退勤 -->
+    <div class="panel" id="outPanel">
+      <div class="ph"><h2>退勤</h2><span class="badge" id="outBadge"></span><button type="button" class="link" id="outEdit">修正する</button></div>
+      <p class="lock" id="outLock">出勤を送信すると、退勤を入力できます。</p>
+      <div id="outBody">
+        <div class="statuses two" role="group" aria-label="退勤のステータス">
+          <button type="button" class="st" data-out="退勤" data-tone="out" aria-pressed="false"><b>退勤</b><span>業務終了</span></button>
+          <button type="button" class="st" data-out="早退" data-tone="early" aria-pressed="false"><b>早退</b><span>早めに終了</span></button>
+        </div>
+        <div class="grid2">
+          <label>退勤時刻<select id="end"></select></label>
+          <label>休憩<select id="breakMin"></select></label>
+        </div>
+        <div class="grid2">
+          <div class="worked"><span>実働</span><output id="worked">—</output></div>
+          <div class="worked"><span>出勤時刻</span><output id="startShown">—</output></div>
+        </div>
+        <label class="field"><span class="lbl">理由・備考<span class="req" id="outReq">必須</span><span class="opt" id="outOpt">任意</span></span>
+          <textarea id="outNote" rows="2" placeholder="早退の理由など"></textarea></label>
+        <label class="field"><span class="lbl">交通費報告<span class="opt">最終出勤日のみ</span></span>
+          <textarea id="transport" rows="2" placeholder="例：新宿〜二子玉川　定期代　14,460円"></textarea></label>
+        <p class="error" id="outError" role="alert"></p>
+        <button type="button" class="primary" id="outBtn">退勤を送信</button>
+      </div>
     </div>
-    <p class="hint" id="hint"></p>
-
-    <label class="block"><span class="lbl">交通費報告<em>最終出勤日のみ</em></span>
-      <textarea id="transport" rows="2" placeholder="例：新宿〜二子玉川　定期代　14,460円"></textarea></label>
-    <label class="block">備考
-      <textarea id="note" rows="2" placeholder="遅刻・早退・欠勤の理由など"></textarea></label>
-
-    <p class="error" id="formError" role="alert"></p>
-    <button type="button" class="primary" id="confirmBtn">確定してメール送信</button>
-    <p class="state" id="saveState"></p>
   </section>
 
   <section class="card" id="history" aria-labelledby="monthLabel">
@@ -239,23 +300,35 @@ dialog h2{font-size:1.125rem;margin:0 0 16px}
   'use strict';
 
   /* ===== 設定：GASをデプロイしたら、ウェブアプリのURLをここに貼る ===== */
-  const GAS_API_URL = 'https://script.google.com/macros/s/AKfycbymBJhygSIJtQxwpyvkZ0CRkkdt8UG5nodPfz6w5RV4AHvNkD8bIT_n87vbTsrUxtC4ag/exec';
+  const GAS_API_URL = 'https://script.google.com/macros/s/ここにデプロイIDを貼る/exec';
 
   const KEY = 'blks_kintai_token';
-  const TONE = { '出勤': 'work', '欠勤': 'absent', '遅刻': 'late', '早退': 'early' };
+  const PLACE_KEY = 'blks_kintai_place';
+  const IN = ['出勤', '遅刻'];
+  const TONE = { '出勤': 'work', '遅刻': 'late', '欠勤': 'absent', '退勤': 'out', '早退': 'early' };
   const WD = '日月火水木金土';
-  const HINT_DEFAULT = '時刻は15分刻みです。朝にステータスだけ確定し、退勤後に時刻を入れてもう一度確定できます。';
-  const HINT_FUTURE = '先の日付は「欠勤」の事前登録だけできます。';
+  const GEO_FRESH_SEC = 120;
 
-  const S = { user: null, today: '', maxDate: '', date: '', ym: '', status: null, record: null, dirty: false, busy: false };
+  const S = {
+    user: null, today: '', maxDate: '', places: [], remote: '',
+    date: '', ym: '', record: null,
+    inKind: null, outKind: null, openIn: false, openOut: false,
+    geo: null, busy: false,
+  };
   const $ = id => document.getElementById(id);
+  let geoSeq = 0;
 
-  /* ---------- トークン保存 ---------- */
+  /* ---------- 保存 ---------- */
   let memToken = null;
+  const store = {
+    get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
+    set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} },
+    del(k) { try { localStorage.removeItem(k); } catch (e) {} },
+  };
   const tokenStore = {
-    get() { try { return localStorage.getItem(KEY) || memToken; } catch (e) { return memToken; } },
-    set(v) { memToken = v; try { localStorage.setItem(KEY, v); } catch (e) {} },
-    clear() { memToken = null; try { localStorage.removeItem(KEY); } catch (e) {} },
+    get() { return store.get(KEY) || memToken; },
+    set(v) { memToken = v; store.set(KEY, v); },
+    clear() { memToken = null; store.del(KEY); },
   };
 
   /* ---------- サーバー呼び出し（GAS API） ---------- */
@@ -276,11 +349,7 @@ dialog h2{font-size:1.125rem;margin:0 0 16px}
       throw new Error('サーバーに接続できません。通信環境を確認して、もう一度お試しください。');
     }
     let json;
-    try {
-      json = await res.json();
-    } catch (e) {
-      throw new Error('サーバーの応答を読み取れません。管理者に連絡してください。');
-    }
+    try { json = await res.json(); } catch (e) { throw new Error('サーバーの応答を読み取れません。管理者に連絡してください。'); }
     if (!json.ok) {
       const err = new Error(json.error || 'エラーが発生しました。');
       err.code = json.code || '';
@@ -288,31 +357,34 @@ dialog h2{font-size:1.125rem;margin:0 0 16px}
     }
     return json.data;
   }
-  function errMsg(e) {
-    return String(e && e.message ? e.message : e);
-  }
+  const errMsg = e => String(e && e.message ? e.message : e);
   async function api(action, params) {
     try {
       return await post(action, Object.assign({ token: tokenStore.get() }, params || {}));
     } catch (e) {
-      if (e.code === 'SESSION_EXPIRED') {
-        showLogin(e.message);
-        e.handled = true;
-      }
+      if (e.code === 'SESSION_EXPIRED') { showLogin(e.message); e.handled = true; }
       throw e;
     }
   }
 
   /* ---------- 小さな関数 ---------- */
+  const pad = n => String(n).padStart(2, '0');
   const addDays = (s, n) => { const d = new Date(s + 'T00:00:00Z'); d.setUTCDate(d.getUTCDate() + n); return d.toISOString().slice(0, 10); };
   const shiftMonth = (ym, n) => { const d = new Date(ym + '-01T00:00:00Z'); d.setUTCMonth(d.getUTCMonth() + n); return d.toISOString().slice(0, 7); };
   const wd = s => WD[new Date(s + 'T00:00:00Z').getUTCDay()];
   const md = s => `${+s.slice(5, 7)}/${+s.slice(8, 10)}`;
   const toMin = t => { if (!t) return null; const p = t.split(':').map(Number); return p[0] * 60 + p[1]; };
-  const hm = m => `${Math.floor(m / 60)}:${String(m % 60).padStart(2, '0')}`;
-  const hmJa = m => `${Math.floor(m / 60)}時間${String(m % 60).padStart(2, '0')}分`;
+  const hm = m => `${Math.floor(m / 60)}:${pad(m % 60)}`;
+  const hmJa = m => `${Math.floor(m / 60)}時間${pad(m % 60)}分`;
   const fmtStamp = s => s ? `${+s.slice(5, 7)}/${+s.slice(8, 10)} ${+s.slice(11, 13)}:${s.slice(14, 16)}` : '';
+  const fmtDist = m => (m >= 1000 ? `${(m / 1000).toFixed(1)}km` : `${Math.round(m)}m`);
   const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  function nowRounded() {
+    const d = new Date();
+    let m = Math.round((d.getHours() * 60 + d.getMinutes()) / 15) * 15;
+    if (m >= 1440) m = 1425;
+    return `${pad(Math.floor(m / 60))}:${pad(m % 60)}`;
+  }
 
   let toastTimer = null;
   function toast(msg) {
@@ -326,7 +398,7 @@ dialog h2{font-size:1.125rem;margin:0 0 16px}
   function buildOptions() {
     const times = ['<option value="">--:--</option>'];
     for (let i = 0; i < 96; i++) {
-      const v = `${String(Math.floor(i / 4)).padStart(2, '0')}:${String((i % 4) * 15).padStart(2, '0')}`;
+      const v = `${pad(Math.floor(i / 4))}:${pad((i % 4) * 15)}`;
       times.push(`<option value="${v}">${v}</option>`);
     }
     $('start').innerHTML = times.join('');
@@ -334,6 +406,55 @@ dialog h2{font-size:1.125rem;margin:0 0 16px}
     const breaks = [];
     for (let m = 0; m <= 240; m += 15) breaks.push(`<option value="${m}">${m}分</option>`);
     $('breakMin').innerHTML = breaks.join('');
+  }
+
+  /* ---------- 位置情報 ---------- */
+  function getPosition() {
+    return new Promise((resolve, reject) => {
+      if (!navigator.geolocation) { reject(new Error('この端末やブラウザでは位置情報を使えません。')); return; }
+      navigator.geolocation.getCurrentPosition(
+        p => resolve({ lat: p.coords.latitude, lng: p.coords.longitude, accuracy: Math.round(p.coords.accuracy), at: Date.now() }),
+        e => reject(new Error(e.code === 1
+          ? '位置情報の利用が許可されていません。ブラウザやスマホの設定で、このページの位置情報を「許可」にしてください。'
+          : '現在地を取得できませんでした。電波のよい場所で「取得し直す」を押してください。')),
+        { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 });
+    });
+  }
+  const isRemote = place => !!S.remote && place === S.remote;
+  const geoFresh = () => S.geo && S.geo.pos && (Date.now() - S.geo.pos.at) / 1000 < GEO_FRESH_SEC;
+  function geoReady() {
+    const place = $('place').value;
+    if (isRemote(place)) return true;
+    return !!(S.geo && S.geo.place === place && S.geo.result && S.geo.result.ok);
+  }
+
+  async function locate() {
+    const place = $('place').value;
+    if (!place) return;
+    const seq = ++geoSeq;
+    if (isRemote(place)) {
+      S.geo = { place: place, result: { ok: true, remote: true, message: 'リモートのため、位置の確認はありません。' } };
+      render();
+      return;
+    }
+    S.geo = { place: place, loading: true };
+    render();
+    try {
+      const pos = await getPosition();
+      if (seq !== geoSeq) return;
+      const result = await api('checkLocation', { place: place, geo: pos });
+      if (seq !== geoSeq) return;
+      S.geo = { place: place, pos: pos, result: result };
+    } catch (e) {
+      if (e.handled || seq !== geoSeq) return;
+      S.geo = { place: place, result: { ok: false, message: errMsg(e) } };
+    }
+    render();
+  }
+
+  function needLocate() {
+    return !$('inBody').hidden && S.date === S.today && IN.indexOf(S.inKind) >= 0
+      && (!S.geo || S.geo.place !== $('place').value || (!S.geo.loading && S.geo.pos && !geoFresh()));
   }
 
   /* ---------- 画面切り替え ---------- */
@@ -347,93 +468,172 @@ dialog h2{font-size:1.125rem;margin:0 0 16px}
 
   async function boot() {
     const b = await api('bootstrap');
-    S.user = b.user; S.today = b.today; S.maxDate = b.maxDate;
+    Object.assign(S, { user: b.user, today: b.today, maxDate: b.maxDate, places: b.places || [], remote: b.remoteLabel || '' });
     $('userName').textContent = `${b.user.name} さん`;
     $('dateInput').max = b.maxDate;
+    $('place').innerHTML = S.places.map(p => `<option value="${esc(p)}">${esc(p)}</option>`).join('');
     $('login').hidden = true;
     $('app').hidden = false;
     showDay(b.today, b.day);
     renderMonth(b.month);
   }
 
-  /* ---------- 1日分の入力 ---------- */
+  /* ---------- 1日分 ---------- */
   function showDay(date, rec) {
     S.date = date;
+    S.record = rec || null;
+    S.openIn = false;
+    S.openOut = false;
+    S.geo = null;
+    geoSeq++;
     $('dateLabel').textContent = `${+date.slice(5, 7)}月${+date.slice(8, 10)}日（${wd(date)}）`;
     $('dateInput').value = date;
     $('nextDay').disabled = date >= S.maxDate;
     $('todayBtn').hidden = date === S.today;
-    fillForm(rec);
+    fillIn();
+    fillOut();
+    render();
     markCurrent();
+    if (needLocate()) locate();
   }
 
-  function fillForm(rec) {
-    S.record = rec || null;
+  function fillIn() {
+    const r = S.record;
+    const isToday = S.date === S.today;
+    S.inKind = r && r.inKind ? r.inKind : null;
+    const saved = store.get(PLACE_KEY);
+    const place = r && r.place && S.places.indexOf(r.place) >= 0 ? r.place
+      : (saved && S.places.indexOf(saved) >= 0 ? saved : (S.places[0] || ''));
+    $('place').value = place;
+    $('start').value = r && r.start ? r.start : (isToday ? nowRounded() : '');
+    $('inNote').value = r ? (r.inNote || '') : '';
+    $('inError').textContent = '';
+  }
+
+  function fillOut() {
+    const r = S.record;
+    S.outKind = r && r.outKind ? r.outKind : null;
+    const now = nowRounded();
+    const after = !(r && r.start) || toMin(now) > toMin(r.start);
+    $('end').value = r && r.end ? r.end : (S.date === S.today && after ? now : '');
+    $('breakMin').value = String(r && r.outKind ? r.breakMin : 0);
+    $('outNote').value = r ? (r.outNote || '') : '';
+    $('transport').value = r ? (r.transport || '') : '';
+    $('outError').textContent = '';
+  }
+
+  function render() {
+    const r = S.record;
+    const isToday = S.date === S.today;
     const future = S.date > S.today;
-    document.querySelectorAll('.st').forEach(b => { b.disabled = future && b.dataset.status !== '欠勤'; });
-    $('hint').textContent = future ? HINT_FUTURE : HINT_DEFAULT;
-    $('start').value = rec ? rec.start : '';
-    $('end').value = rec ? rec.end : '';
-    $('breakMin').value = String(rec ? rec.breakMin : 0);
-    $('transport').value = rec ? rec.transport : '';
-    $('note').value = rec ? rec.note : '';
-    $('formError').textContent = '';
-    setStatus(rec ? rec.status : null);
-    renderStamp(rec, false);
-    setDirty(false);
+    const past = S.date < S.today;
+    const inDone = !!(r && IN.indexOf(r.inKind) >= 0);
+    const absent = !!(r && r.inKind === '欠勤');
+    const outDone = !!(r && r.outKind);
+
+    renderSummary();
+
+    // その日のお知らせ
+    let msg = '';
+    if (future) msg = '先の日付は「欠勤」の事前登録だけできます。';
+    else if (past && !inDone && !absent) msg = '過去の日の出勤は登録できません。必要な場合は管理者に連絡してください（欠勤の登録はできます）。';
+    else if (past && inDone && !outDone) msg = 'この日は退勤が送信されていません。退勤時刻を入れて送信してください。';
+    $('dayMsg').textContent = msg;
+
+    // 出勤パネル
+    const inBadge = $('inBadge');
+    inBadge.textContent = inDone ? `${r.inKind === '遅刻' ? '遅刻　' : ''}${r.start}　${r.place}` : absent ? '欠勤' : '未送信';
+    inBadge.classList.toggle('done', inDone || absent);
+    const inEditable = isToday || absent || (!inDone && !absent);
+    $('inEdit').hidden = !((inDone || absent) && !S.openIn && (isToday || absent));
+    $('inBody').hidden = !(((!inDone && !absent) && inEditable) || S.openIn);
+    document.querySelectorAll('[data-in]').forEach(b => {
+      const k = b.dataset.in;
+      b.disabled = IN.indexOf(k) >= 0 ? !isToday : inDone;
+      b.setAttribute('aria-pressed', String(S.inKind === k));
+    });
+    const inMode = IN.indexOf(S.inKind) >= 0;
+    $('inFields').hidden = !inMode;
+    const inNeedsReason = S.inKind === '遅刻' || S.inKind === '欠勤';
+    $('inReq').hidden = !inNeedsReason;
+    $('inOpt').hidden = inNeedsReason;
+    const inFix = (inMode && inDone) || (S.inKind === '欠勤' && absent);
+    $('inBtn').textContent = S.busy === 'in' ? '送信しています…' : `${S.inKind || '出勤'}を${inFix ? '修正して' : ''}送信`;
+    $('inBtn').disabled = !!S.busy || !S.inKind || (inMode && !geoReady());
+    renderGeo();
+
+    // 退勤パネル
+    $('outPanel').hidden = future || absent || (past && !inDone);
+    $('outLock').hidden = inDone;
+    const outBadge = $('outBadge');
+    outBadge.textContent = !inDone ? '' : outDone ? `${r.outKind === '早退' ? '早退　' : ''}${r.end}　実働 ${hm(Number(r.workMin) || 0)}` : '未送信';
+    outBadge.classList.toggle('done', outDone);
+    $('outEdit').hidden = !(outDone && !S.openOut);
+    $('outBody').hidden = !inDone || (outDone && !S.openOut);
+    document.querySelectorAll('[data-out]').forEach(b => b.setAttribute('aria-pressed', String(S.outKind === b.dataset.out)));
+    $('outReq').hidden = S.outKind !== '早退';
+    $('outOpt').hidden = S.outKind === '早退';
+    $('startShown').textContent = inDone ? r.start : '—';
+    $('outBtn').textContent = S.busy === 'out' ? '送信しています…' : `${S.outKind || '退勤'}を${outDone ? '修正して' : ''}送信`;
+    $('outBtn').disabled = !!S.busy || !S.outKind;
+    updateWorked();
   }
 
-  function setStatus(s) {
-    S.status = s;
-    document.querySelectorAll('.st').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.status === s)));
-    const off = s === '欠勤';
-    $('timeFields').classList.toggle('off', off);
-    ['start', 'end', 'breakMin'].forEach(id => { $(id).disabled = off; });
-    updateWorked();
+  function renderGeo() {
+    const box = $('geo');
+    const place = $('place').value;
+    let cls = '', ic = '', text = '', retry = false;
+    if (isRemote(place)) { ic = '–'; text = 'リモートのため、位置の確認はありません。'; }
+    else if (!S.geo || S.geo.place !== place) { text = '現在地を確認します…'; cls = 'loading'; }
+    else if (S.geo.loading) { cls = 'loading'; text = '現在地を確認しています…'; }
+    else if (S.geo.result && S.geo.result.ok) { cls = 'ok'; ic = '✓'; text = `${S.geo.result.message}。出勤を送信できます。`; retry = true; }
+    else { cls = 'ng'; ic = '!'; text = (S.geo.result && S.geo.result.message) || '現在地を確認できませんでした。'; retry = true; }
+    box.className = 'geo ' + cls;
+    $('geoIc').textContent = ic;
+    $('geoText').textContent = text;
+    $('geoRetry').hidden = !retry;
+  }
+
+  function renderSummary() {
+    const r = S.record;
+    const box = $('daySum');
+    if (!r || !r.inKind) { box.hidden = true; return; }
+    box.hidden = false;
+    const absent = r.inKind === '欠勤';
+    $('dsInTag').textContent = r.inKind;
+    $('dsInTag').dataset.tone = TONE[r.inKind];
+    $('dsInMain').textContent = absent ? `理由：${r.inNote}` : `${r.start}　${r.place}`;
+    $('dsInSub').textContent = absent ? `送信 ${fmtStamp(r.inAt)}`
+      : `${isRemote(r.place) ? '位置確認なし' : `勤務地から約${fmtDist(Number(r.distance) || 0)}`}・送信 ${fmtStamp(r.inAt)}`;
+    $('dsOut').hidden = !r.outKind;
+    if (r.outKind) {
+      $('dsOutTag').textContent = r.outKind;
+      $('dsOutTag').dataset.tone = TONE[r.outKind];
+      $('dsOutMain').textContent = `${r.end}　実働 ${hm(Number(r.workMin) || 0)}`;
+      $('dsOutSub').textContent = `休憩${r.breakMin}分・送信 ${fmtStamp(r.outAt)}`;
+    }
+    const lastOut = !!r.outKind;
+    $('stampStatus').textContent = lastOut ? r.outKind : r.inKind;
+    $('stampTime').textContent = fmtStamp(lastOut ? r.outAt : r.inAt);
+  }
+
+  function popStamp() {
+    const s = $('stamp');
+    s.classList.remove('pop');
+    void s.offsetWidth;
+    s.classList.add('pop');
   }
 
   function updateWorked() {
     const o = $('worked');
-    if (S.status === '欠勤') { o.textContent = '—'; return; }
-    const s = toMin($('start').value), e = toMin($('end').value), b = Number($('breakMin').value) || 0;
+    const r = S.record;
+    const s = r && r.start ? toMin(r.start) : null;
+    const e = toMin($('end').value);
+    const b = Number($('breakMin').value) || 0;
     if (s == null || e == null) { o.textContent = '—'; return; }
     if (e <= s) { o.textContent = '時刻を確認'; return; }
     if (b >= e - s) { o.textContent = '休憩を確認'; return; }
     o.textContent = hmJa(e - s - b);
-  }
-
-  function setDirty(d) {
-    S.dirty = d;
-    const st = $('saveState');
-    if (d && S.record) {
-      st.textContent = '変更があります。確定すると修正としてメールが送信されます。';
-      st.className = 'state dirty';
-    } else if (S.record) {
-      st.textContent = `確定済み（${S.record.count}回目　${fmtStamp(S.record.confirmedAt)}）`;
-      st.className = 'state';
-    } else {
-      st.textContent = d ? '' : 'この日はまだ確定していません。';
-      st.className = 'state';
-    }
-    $('stamp').classList.toggle('stale', d);
-    $('confirmBtn').textContent = S.record ? '修正を確定してメール送信' : '確定してメール送信';
-  }
-
-  function renderStamp(rec, animate) {
-    const s = $('stamp');
-    if (!rec) { s.hidden = true; return; }
-    $('stampStatus').textContent = rec.status;
-    $('stampTime').textContent = fmtStamp(rec.confirmedAt);
-    s.hidden = false;
-    s.classList.remove('pop');
-    if (animate) { void s.offsetWidth; s.classList.add('pop'); }
-  }
-
-  function setBusy(b) {
-    S.busy = b;
-    $('confirmBtn').disabled = b;
-    if (b) $('confirmBtn').textContent = '送信しています…';
-    else setDirty(S.dirty);
   }
 
   async function goDay(date) {
@@ -450,36 +650,87 @@ dialog h2{font-size:1.125rem;margin:0 0 16px}
     }
   }
 
-  async function confirmEntry() {
+  async function afterSave(res) {
+    S.record = res.record;
+    S.geo = null;
+    geoSeq++;
+    S.openIn = false;
+    S.openOut = false;
+    fillIn();
+    fillOut();
+    render();
+    popStamp();
+    const fix = res.kind === '修正' ? 'の修正' : '';
+    toast(res.mailSent
+      ? `${res.action}${fix}を送信し、管理者にメールしました。`
+      : `${res.action}${fix}を保存しました。管理者へのメール送信に失敗したため、直接ご連絡ください。`);
+    if (S.date.slice(0, 7) === S.ym) {
+      try { renderMonth(await api('month', { ym: S.ym })); } catch (e) {}
+    }
+  }
+
+  async function submitIn() {
     if (S.busy) return;
-    $('formError').textContent = '';
-    if (!S.status) { $('formError').textContent = 'ステータスを選んでください。'; return; }
-    const payload = {
-      date: S.date,
-      status: S.status,
-      start: $('start').value,
-      end: $('end').value,
-      breakMin: Number($('breakMin').value) || 0,
-      transport: $('transport').value,
-      note: $('note').value,
-    };
-    if (S.status !== '欠勤' && payload.start && payload.end && toMin(payload.end) <= toMin(payload.start)) {
-      $('formError').textContent = '勤務終了は勤務開始より後の時刻にしてください。';
+    const err = $('inError');
+    err.textContent = '';
+    if (!S.inKind) { err.textContent = '「出勤」「遅刻」「欠勤」のどれかを選んでください。'; return; }
+    const note = $('inNote').value.trim();
+    if ((S.inKind === '遅刻' || S.inKind === '欠勤') && !note) {
+      err.textContent = `${S.inKind}の理由を入力してください。`;
+      $('inNote').focus();
       return;
     }
-    setBusy(true);
+    S.busy = 'in';
+    render();
     try {
-      const res = await api('confirm', { entry: payload });
-      fillForm(res.record);
-      renderStamp(res.record, true);
-      toast(res.mailSent
-        ? (res.kind === '修正' ? '修正を確定し、管理者にメールを送信しました。' : '確定し、管理者にメールを送信しました。')
-        : '確定しました。管理者へのメール送信に失敗したため、直接ご連絡ください。');
-      if (S.date.slice(0, 7) === S.ym) renderMonth(await api('month', { ym: S.ym }));
+      let res;
+      if (S.inKind === '欠勤') {
+        res = await api('absent', { entry: { date: S.date, note: note } });
+      } else {
+        const place = $('place').value;
+        const start = $('start').value;
+        if (!start) throw new Error('出勤時刻を選んでください。');
+        if (!isRemote(place) && !geoFresh()) await locate();
+        if (!geoReady()) throw new Error((S.geo && S.geo.result && S.geo.result.message) || '現在地を確認できていません。');
+        res = await api('checkIn', { entry: {
+          date: S.date, kind: S.inKind, place: place, start: start, note: note,
+          geo: isRemote(place) ? null : S.geo.pos,
+        } });
+        store.set(PLACE_KEY, place);
+      }
+      S.busy = false;
+      await afterSave(res);
     } catch (e) {
-      if (!e.handled) $('formError').textContent = errMsg(e);
-    } finally {
-      setBusy(false);
+      S.busy = false;
+      render();
+      if (!e.handled) err.textContent = errMsg(e);
+    }
+  }
+
+  async function submitOut() {
+    if (S.busy) return;
+    const err = $('outError');
+    err.textContent = '';
+    if (!S.outKind) { err.textContent = '「退勤」か「早退」を選んでください。'; return; }
+    const note = $('outNote').value.trim();
+    if (S.outKind === '早退' && !note) { err.textContent = '早退の理由を入力してください。'; $('outNote').focus(); return; }
+    const end = $('end').value;
+    if (!end) { err.textContent = '退勤時刻を選んでください。'; return; }
+    const r = S.record;
+    if (r && r.start && toMin(end) <= toMin(r.start)) { err.textContent = `退勤時刻は、出勤時刻（${r.start}）より後にしてください。`; return; }
+    S.busy = 'out';
+    render();
+    try {
+      const res = await api('checkOut', { entry: {
+        date: S.date, kind: S.outKind, end: end, breakMin: Number($('breakMin').value) || 0,
+        note: note, transport: $('transport').value,
+      } });
+      S.busy = false;
+      await afterSave(res);
+    } catch (e) {
+      S.busy = false;
+      render();
+      if (!e.handled) err.textContent = errMsg(e);
     }
   }
 
@@ -489,19 +740,22 @@ dialog h2{font-size:1.125rem;margin:0 0 16px}
     $('monthLabel').textContent = `${m.ym.slice(0, 4)}年${+m.ym.slice(5)}月の稼働`;
     $('nextMonth').disabled = m.ym >= S.maxDate.slice(0, 7);
     const c = m.counts;
-    $('monthSummary').textContent = m.records.length
-      ? `実働 ${hmJa(m.totalMin)}　出勤 ${c['出勤']}日　遅刻 ${c['遅刻']}日　早退 ${c['早退']}日　欠勤 ${c['欠勤']}日`
+    const parts = [`実働 ${hmJa(m.totalMin)}`, `出勤 ${c.worked}日`, `遅刻 ${c.late}日`, `早退 ${c.early}日`, `欠勤 ${c.absent}日`];
+    $('monthSummary').innerHTML = m.records.length
+      ? parts.map(t => `<span>${esc(t)}</span>`).join('') + (c.noOut ? `<span class="warn">退勤未送信 ${c.noOut}日</span>` : '')
       : '';
     $('monthList').innerHTML = m.records.length
       ? m.records.map(r => {
-          const t = r.start && r.end ? `${esc(r.start)}–${esc(r.end)}` : (r.status === '欠勤' ? '' : '時刻未入力');
+          const chips = [r.inKind, r.outKind].filter(Boolean).map(k => `<span class="tag" data-tone="${TONE[k] || ''}">${esc(k)}</span>`).join('');
+          let t = '';
+          if (r.inKind === '欠勤') t = '';
+          else if (r.start) t = `${esc(r.start)}–${esc(r.end || '')}<small>${esc(r.place)}</small>`;
           const w = r.workMin === '' || r.workMin == null ? '' : hm(Number(r.workMin));
           return `<li><button type="button" class="day" data-date="${esc(r.date)}">`
-            + `<span>${md(r.date)}（${wd(r.date)}）</span>`
-            + `<span class="chip" data-tone="${TONE[r.status] || ''}">${esc(r.status)}</span>`
+            + `<span>${md(r.date)}（${wd(r.date)}）</span><span class="chips">${chips}</span>`
             + `<span class="t">${t}</span><span class="w">${w}</span></button></li>`;
         }).join('')
-      : '<li class="empty">この月の確定済みの記録はまだありません。</li>';
+      : '<li class="empty">この月の記録はまだありません。</li>';
     markCurrent();
   }
 
@@ -541,14 +795,25 @@ dialog h2{font-size:1.125rem;margin:0 0 16px}
     showLogin('ログアウトしました。');
   });
 
-  document.querySelectorAll('.st').forEach(b => b.addEventListener('click', () => {
-    setStatus(b.dataset.status);
-    setDirty(true);
+  document.querySelectorAll('[data-in]').forEach(b => b.addEventListener('click', () => {
+    S.inKind = b.dataset.in;
+    $('inError').textContent = '';
+    render();
+    if (needLocate()) locate();
   }));
-  ['start', 'end', 'breakMin'].forEach(id => $(id).addEventListener('change', () => { updateWorked(); setDirty(true); }));
-  ['transport', 'note'].forEach(id => $(id).addEventListener('input', () => setDirty(true)));
+  document.querySelectorAll('[data-out]').forEach(b => b.addEventListener('click', () => {
+    S.outKind = b.dataset.out;
+    $('outError').textContent = '';
+    render();
+  }));
+  $('place').addEventListener('change', () => { $('inError').textContent = ''; locate(); });
+  $('geoRetry').addEventListener('click', () => locate());
+  ['end', 'breakMin'].forEach(id => $(id).addEventListener('change', updateWorked));
+  $('inEdit').addEventListener('click', () => { S.openIn = true; S.geo = null; geoSeq++; render(); if (needLocate()) locate(); });
+  $('outEdit').addEventListener('click', () => { S.openOut = true; render(); });
+  $('inBtn').addEventListener('click', submitIn);
+  $('outBtn').addEventListener('click', submitOut);
 
-  $('confirmBtn').addEventListener('click', confirmEntry);
   $('prevDay').addEventListener('click', () => goDay(addDays(S.date, -1)));
   $('nextDay').addEventListener('click', () => goDay(addDays(S.date, 1)));
   $('todayBtn').addEventListener('click', () => goDay(S.today));
@@ -564,11 +829,7 @@ dialog h2{font-size:1.125rem;margin:0 0 16px}
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });
 
-  $('pwBtn').addEventListener('click', () => {
-    $('pwForm').reset();
-    $('pwError').textContent = '';
-    $('pwDialog').showModal();
-  });
+  $('pwBtn').addEventListener('click', () => { $('pwForm').reset(); $('pwError').textContent = ''; $('pwDialog').showModal(); });
   $('pwCancel').addEventListener('click', () => $('pwDialog').close());
   $('pwForm').addEventListener('submit', async ev => {
     ev.preventDefault();
@@ -589,11 +850,8 @@ dialog h2{font-size:1.125rem;margin:0 0 16px}
 
   /* ---------- 起動 ---------- */
   buildOptions();
-  if (tokenStore.get()) {
-    boot().catch(e => { if (!e.handled) showLogin(errMsg(e)); });
-  } else {
-    showLogin();
-  }
+  if (tokenStore.get()) boot().catch(e => { if (!e.handled) showLogin(errMsg(e)); });
+  else showLogin();
 })();
 </script>
 </body>
