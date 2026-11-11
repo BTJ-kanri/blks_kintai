@@ -346,7 +346,7 @@ dialog h2{font-size:1.125rem;margin:0 0 16px}
         <button type="button" class="nav" id="nextPlan" aria-label="次の月">›</button>
       </div>
       <div class="legend"><span><span class="tag" data-tone="fixed">確定</span> 確定したシフト</span><span><span class="tag" data-tone="wish">希望</span> 提出した希望</span><span><span class="tag" data-tone="leave">休暇</span> 休暇の申請</span></div>
-      <p class="hint">希望を出したい日をタップして選び、下の欄で内容を送信します。確定したシフトは変更できません（変更は管理者に連絡）。</p>
+      <p class="hint">希望を出したい日をタップして選び（複数可）、下の欄で開始・終了時刻を入れて送信します。確定したシフトは変更できません（変更は管理者に連絡）。</p>
       <ol class="pdays" id="planList"></ol>
       <div class="editor" id="wishEditor" hidden>
         <div class="eh"><b id="wishCount"></b><button type="button" class="link" id="wishClear">選択を解除</button></div>
@@ -356,14 +356,13 @@ dialog h2{font-size:1.125rem;margin:0 0 16px}
           <button type="button" data-wk="" aria-pressed="false">取り消す</button>
         </div>
         <div id="wishWork">
-          <label class="field">シフトパターン<select id="wishPattern"></select></label>
           <div class="grid3" id="wishTimes">
             <label>開始<select id="wishStart"></select></label>
             <label>終了<select id="wishEnd"></select></label>
             <label>休憩<select id="wishBreak"></select></label>
           </div>
         </div>
-        <label class="field" id="wishNoteWrap">メモ（任意）<textarea id="wishNote" rows="2" placeholder="例：午前は通院のため午後から"></textarea></label>
+        <label class="field" id="wishNoteWrap">メモ（任意）<textarea id="wishNote" rows="2" placeholder="例：午前は通院のため13時から"></textarea></label>
         <p class="error" id="wishError" role="alert"></p>
         <button type="button" class="primary" id="wishBtn">希望を送信</button>
       </div>
@@ -434,6 +433,7 @@ dialog h2{font-size:1.125rem;margin:0 0 16px}
 
   const KEY = 'blks_kintai_token';
   const PLACE_KEY = 'blks_kintai_place';
+  const WISH_KEY = 'blks_kintai_wish';
   const IN = ['出勤', '遅刻'];
   const TONE = { '出勤': 'work', '遅刻': 'late', '欠勤': 'absent', '退勤': 'out', '早退': 'early', '休暇': 'leave',
     '有給休暇': 'work', '特別休暇': 'leave', '残業': 'late', '打刻修正': 'early' };
@@ -627,7 +627,7 @@ dialog h2{font-size:1.125rem;margin:0 0 16px}
     const parts = [];
     if (p && p.shift) {
       const sh = p.shift;
-      const label = sh.kind === '休み' ? '休み' : `${sh.pattern ? sh.pattern + ' ' : ''}${sh.start}–${sh.end}`;
+      const label = shiftText(sh);
       parts.push(`<span>予定</span><b>${esc(label)}</b>${sh.state === '希望' ? '<span class="tag" data-tone="wish">希望</span>' : ''}`);
     }
     if (p) {
@@ -964,7 +964,7 @@ dialog h2{font-size:1.125rem;margin:0 0 16px}
 
   function shiftText(sh) {
     if (!sh) return '';
-    return sh.kind === '休み' ? '休み' : `${sh.pattern ? sh.pattern + ' ' : ''}${sh.start}–${sh.end}`;
+    return sh.kind === '休み' ? '休み' : `${sh.start}–${sh.end}${sh.breakMin ? `（休憩${sh.breakMin}分）` : ''}`;
   }
 
   function editableDay(date) {
@@ -995,9 +995,24 @@ dialog h2{font-size:1.125rem;margin:0 0 16px}
         + `<span class="ck">✓</span><span class="pd">${md(date)}（${wd(date)}）</span><span class="pv">${v}</span></button></li>`);
     }
     $('planList').innerHTML = items.join('');
-    $('wishPattern').innerHTML = sc.patterns.map(p => `<option value="${esc(p.name)}">${esc(p.name)}（${p.start}–${p.end}）</option>`).join('')
-      + '<option value="">時間を指定する</option>';
     renderWishEditor();
+  }
+
+  /** 1日だけ選んだときはその日の希望を、それ以外は前回送った時刻を入れておく */
+  function prefillWish() {
+    let v = { start: '09:00', end: '18:00', breakMin: 60 };
+    try { Object.assign(v, JSON.parse(store.get(WISH_KEY) || '{}')); } catch (e) {}
+    if (S.sel.size === 1) {
+      const sh = S.sched.shifts.find(x => x.date === [...S.sel][0]);
+      if (sh) {
+        S.wishKind = sh.kind;
+        if (sh.kind === '勤務') v = { start: sh.start, end: sh.end, breakMin: sh.breakMin };
+        $('wishNote').value = sh.note || '';
+      }
+    }
+    $('wishStart').value = v.start;
+    $('wishEnd').value = v.end;
+    $('wishBreak').value = String(v.breakMin);
   }
 
   function renderWishEditor() {
@@ -1008,7 +1023,6 @@ dialog h2{font-size:1.125rem;margin:0 0 16px}
     $('wishCount').textContent = `選んだ日：${n}日（${list.slice(0, 6).join('、')}${n > 6 ? ' ほか' : ''}）`;
     document.querySelectorAll('[data-wk]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.wk === S.wishKind)));
     $('wishWork').hidden = S.wishKind !== '勤務';
-    $('wishTimes').hidden = $('wishPattern').value !== '';
     $('wishNoteWrap').hidden = S.wishKind === '';
     $('wishBtn').textContent = S.wishKind === '' ? '希望を取り消す' : '希望を送信';
   }
@@ -1017,14 +1031,13 @@ dialog h2{font-size:1.125rem;margin:0 0 16px}
     const err = $('wishError');
     err.textContent = '';
     const kind = S.wishKind;
-    const pattern = $('wishPattern').value;
     const base = { kind: kind, note: $('wishNote').value.trim() };
     if (kind === '勤務') {
-      if (pattern) base.pattern = pattern;
-      else {
-        Object.assign(base, { start: $('wishStart').value, end: $('wishEnd').value, breakMin: Number($('wishBreak').value) || 0 });
-        if (!base.start || !base.end) { err.textContent = '開始時刻と終了時刻を選んでください。'; return; }
-      }
+      Object.assign(base, { start: $('wishStart').value, end: $('wishEnd').value, breakMin: Number($('wishBreak').value) || 0 });
+      if (!base.start || !base.end) { err.textContent = '開始時刻と終了時刻を選んでください。'; return; }
+      if (toMin(base.end) <= toMin(base.start)) { err.textContent = '終了時刻は開始時刻より後にしてください。'; return; }
+      if (base.breakMin >= toMin(base.end) - toMin(base.start)) { err.textContent = '休憩時間が勤務時間より長くなっています。'; return; }
+      store.set(WISH_KEY, JSON.stringify({ start: base.start, end: base.end, breakMin: base.breakMin }));
     }
     const entries = [...S.sel].sort().map(date => Object.assign({ date: date }, base));
     $('wishBtn').disabled = true;
@@ -1178,11 +1191,11 @@ dialog h2{font-size:1.125rem;margin:0 0 16px}
     if (S.sel.has(d)) S.sel.delete(d); else S.sel.add(d);
     b.setAttribute('aria-pressed', String(S.sel.has(d)));
     $('wishError').textContent = '';
+    if (S.sel.size <= 1) prefillWish();
     renderWishEditor();
   });
   $('wishClear').addEventListener('click', () => { S.sel.clear(); renderSchedule(); });
   document.querySelectorAll('[data-wk]').forEach(b => b.addEventListener('click', () => { S.wishKind = b.dataset.wk; renderWishEditor(); }));
-  $('wishPattern').addEventListener('change', renderWishEditor);
   $('wishBtn').addEventListener('click', submitWish);
 
   document.querySelectorAll('[data-rtype]').forEach(b => b.addEventListener('click', () => {
