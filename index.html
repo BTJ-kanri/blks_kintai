@@ -15,7 +15,7 @@
 :root{
   --paper:#EEF1EF; --sheet:#FFFFFF; --ink:#1D2A36; --muted:#5D6A75; --line:#CDD5D2;
   --shu:#C13B2A;
-  --st-work:#2E6A4C; --st-absent:#8C2F3D; --st-late:#9A5A0C; --st-early:#355A8E; --st-out:#2C6468; --on-tone:#FFFFFF;
+  --st-work:#2E6A4C; --st-absent:#8C2F3D; --st-late:#9A5A0C; --st-early:#355A8E; --st-out:#2C6468; --st-leave:#6B4E8C; --on-tone:#FFFFFF;
   --ok-bg:#E6F1EA; --ng-bg:#F7E6E6;
   font-family:"Zen Kaku Gothic New","Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic UI","Meiryo",sans-serif;
   color-scheme:light;
@@ -24,7 +24,7 @@
   :root{
     --paper:#131A1F; --sheet:#1B242B; --ink:#E6ECEA; --muted:#9BA7AF; --line:#33414B;
     --shu:#E5654F;
-    --st-work:#62B58A; --st-absent:#DA7584; --st-late:#E2A24C; --st-early:#82A3D8; --st-out:#6DB9BD; --on-tone:#10171C;
+    --st-work:#62B58A; --st-absent:#DA7584; --st-late:#E2A24C; --st-early:#82A3D8; --st-out:#6DB9BD; --st-leave:#B79AD8; --on-tone:#10171C;
     --ok-bg:#1D3328; --ng-bg:#3A2226;
     color-scheme:dark;
   }
@@ -168,6 +168,56 @@ dialog h2{font-size:1.125rem;margin:0 0 16px}
   width:max-content;max-width:min(92vw,480px)}
 .toast.show{opacity:1;transform:translate(-50%,0)}
 
+
+/* タブ */
+.tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;background:var(--sheet);border:1px solid var(--line);border-radius:12px;padding:4px;margin:0 0 14px;position:sticky;top:6px;z-index:5}
+.tab{border:0;background:none;border-radius:9px;padding:9px 4px;font-weight:700;font-size:.9375rem;color:var(--muted);cursor:pointer;position:relative}
+.tab[aria-selected="true"]{background:var(--ink);color:var(--sheet)}
+.tab .cnt{display:inline-block;min-width:18px;height:18px;line-height:18px;border-radius:9px;background:var(--shu);color:#fff;font-size:.6875rem;margin-left:4px;padding:0 5px;vertical-align:1px}
+.planline{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:.8125rem;color:var(--muted);margin:-6px 0 12px;justify-content:center}
+.planline:empty{display:none}
+.planline b{color:var(--ink)}
+[data-tone="leave"]{--tone:var(--st-leave)}
+[data-tone="wish"]{--tone:var(--st-late)}
+[data-tone="fixed"]{--tone:var(--st-work)}
+/* 予定 */
+.legend{display:flex;gap:10px;flex-wrap:wrap;font-size:.75rem;color:var(--muted);margin:8px 0 4px}
+.pdays{list-style:none;margin:6px 0 0;padding:0}
+.pdays li + li{border-top:1px solid var(--line)}
+.pday{display:grid;grid-template-columns:24px 5.4em 1fr;align-items:center;gap:8px;width:100%;background:none;border:0;padding:9px 4px;text-align:left;cursor:pointer;border-radius:6px;font-variant-numeric:tabular-nums}
+.pday:disabled{cursor:default}
+.pday .ck{width:20px;height:20px;border:1.5px solid var(--line);border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:900;color:var(--sheet)}
+.pday:disabled .ck{visibility:hidden}
+.pday[aria-pressed="true"]{background:var(--paper)}
+.pday[aria-pressed="true"] .ck{background:var(--ink);border-color:var(--ink)}
+.pday.off .pd{color:var(--muted)}
+.pday .pv{display:flex;flex-wrap:wrap;gap:4px 6px;align-items:center;font-size:.875rem}
+.pday .pv small{color:var(--muted);font-size:.75rem}
+.pday .tag{font-size:.6875rem;padding:0 5px}
+.editor{position:sticky;bottom:8px;background:var(--sheet);border:1.5px solid var(--ink);border-radius:12px;padding:14px;margin-top:12px;box-shadow:0 6px 18px rgba(0,0,0,.12)}
+.editor .eh{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:10px;font-size:.875rem}
+.seg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:12px}
+.seg button{border:1px solid var(--line);background:var(--sheet);border-radius:8px;padding:9px 4px;font-weight:700;cursor:pointer;font-size:.875rem}
+.seg button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--sheet)}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px}
+.hint{font-size:.75rem;color:var(--muted);margin:8px 0 0}
+/* 申請 */
+.bal{display:flex;align-items:baseline;gap:6px 14px;flex-wrap:wrap}
+.bal .big{font-size:2rem;font-weight:900;font-variant-numeric:tabular-nums;line-height:1}
+.bal small{color:var(--muted);font-size:.8125rem}
+.rtypes{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+.rtypes .st{min-height:54px}
+.reqs{list-style:none;margin:6px 0 0;padding:0}
+.reqs li{border-top:1px solid var(--line);padding:11px 2px}
+.reqs li:first-child{border-top:0}
+.rq-h{display:flex;align-items:center;gap:8px;margin-bottom:3px}
+.rq-b{font-weight:700;font-size:.9375rem;font-variant-numeric:tabular-nums}
+.rq-n,.rq-c{font-size:.8125rem;color:var(--muted);overflow-wrap:anywhere}
+.rq-c{color:var(--ink)}
+.rq-f{display:flex;justify-content:space-between;align-items:baseline;font-size:.75rem;color:var(--muted);margin-top:4px}
+.stt{font-size:.6875rem;font-weight:700;border-radius:999px;padding:1px 8px;border:1.5px solid currentColor;margin-left:auto}
+.stt.s-申請中{color:var(--st-late)} .stt.s-承認{color:var(--st-work)} .stt.s-却下{color:var(--st-absent)} .stt.s-取消{color:var(--muted)}
+
 @media (max-width:380px){
   .st b{font-size:1.1rem} .date-label{font-size:1.25rem}
   .daysum{padding-right:92px} .stamp{width:70px;height:70px;margin-top:-35px} .stamp b{font-size:1.05rem}
@@ -202,6 +252,13 @@ dialog h2{font-size:1.125rem;margin:0 0 16px}
     </div>
   </header>
 
+  <nav class="tabs" role="tablist" aria-label="メニュー">
+    <button type="button" class="tab" role="tab" data-tab="punch" aria-selected="true">打刻</button>
+    <button type="button" class="tab" role="tab" data-tab="plan" aria-selected="false">予定</button>
+    <button type="button" class="tab" role="tab" data-tab="req" aria-selected="false">申請<span class="cnt" id="reqCnt" hidden></span></button>
+  </nav>
+
+  <div id="viewPunch">
   <section class="card" id="entry" aria-labelledby="dateLabel">
     <div class="datebar">
       <button type="button" class="nav" id="prevDay" aria-label="前の日">‹</button>
@@ -212,6 +269,7 @@ dialog h2{font-size:1.125rem;margin:0 0 16px}
       <button type="button" class="nav" id="nextDay" aria-label="次の日">›</button>
       <button type="button" class="today" id="todayBtn">今日</button>
     </div>
+    <div class="planline" id="planLine"></div>
 
     <div class="daysum" id="daySum" hidden>
       <div class="ds" id="dsIn"><span class="tag" id="dsInTag"></span><span class="ds-main" id="dsInMain"></span><span class="ds-sub" id="dsInSub"></span></div>
@@ -277,6 +335,78 @@ dialog h2{font-size:1.125rem;margin:0 0 16px}
     <p class="summary" id="monthSummary"></p>
     <ol class="days" id="monthList"></ol>
   </section>
+  </div>
+
+  <!-- 予定 -->
+  <div id="viewPlan" hidden>
+    <section class="card" id="planCard">
+      <div class="hist-head">
+        <button type="button" class="nav" id="prevPlan" aria-label="前の月">‹</button>
+        <h2 id="planLabel"></h2>
+        <button type="button" class="nav" id="nextPlan" aria-label="次の月">›</button>
+      </div>
+      <div class="legend"><span><span class="tag" data-tone="fixed">確定</span> 確定したシフト</span><span><span class="tag" data-tone="wish">希望</span> 提出した希望</span><span><span class="tag" data-tone="leave">休暇</span> 休暇の申請</span></div>
+      <p class="hint">希望を出したい日をタップして選び、下の欄で内容を送信します。確定したシフトは変更できません（変更は管理者に連絡）。</p>
+      <ol class="pdays" id="planList"></ol>
+      <div class="editor" id="wishEditor" hidden>
+        <div class="eh"><b id="wishCount"></b><button type="button" class="link" id="wishClear">選択を解除</button></div>
+        <div class="seg" role="group" aria-label="希望の内容">
+          <button type="button" data-wk="勤務" aria-pressed="true">勤務</button>
+          <button type="button" data-wk="休み" aria-pressed="false">休み希望</button>
+          <button type="button" data-wk="" aria-pressed="false">取り消す</button>
+        </div>
+        <div id="wishWork">
+          <label class="field">シフトパターン<select id="wishPattern"></select></label>
+          <div class="grid3" id="wishTimes">
+            <label>開始<select id="wishStart"></select></label>
+            <label>終了<select id="wishEnd"></select></label>
+            <label>休憩<select id="wishBreak"></select></label>
+          </div>
+        </div>
+        <label class="field" id="wishNoteWrap">メモ（任意）<textarea id="wishNote" rows="2" placeholder="例：午前は通院のため午後から"></textarea></label>
+        <p class="error" id="wishError" role="alert"></p>
+        <button type="button" class="primary" id="wishBtn">希望を送信</button>
+      </div>
+    </section>
+  </div>
+
+  <!-- 申請 -->
+  <div id="viewReq" hidden>
+    <section class="card">
+      <h2 class="ph" style="margin:0 0 8px;font-size:1.0625rem">有給休暇の残り</h2>
+      <div class="bal"><span class="big" id="balRemain">—</span><small id="balSub"></small></div>
+    </section>
+    <section class="card" id="reqForm">
+      <h2 style="margin:0 0 12px;font-size:1.0625rem">新しい申請</h2>
+      <div class="rtypes" role="group" aria-label="申請の種類">
+        <button type="button" class="st" data-rtype="有給休暇" data-tone="work" aria-pressed="false"><b>有給休暇</b><span>全日・半休</span></button>
+        <button type="button" class="st" data-rtype="特別休暇" data-tone="leave" aria-pressed="false"><b>特別休暇</b><span>慶弔など</span></button>
+        <button type="button" class="st" data-rtype="残業" data-tone="late" aria-pressed="false"><b>残業</b><span>事前・事後</span></button>
+        <button type="button" class="st" data-rtype="打刻修正" data-tone="early" aria-pressed="false"><b>打刻修正</b><span>押し忘れ・誤り</span></button>
+      </div>
+      <div id="rqFields" hidden>
+        <div id="rqLeave"><label class="field">区分<select id="rqUnit"><option>全日</option><option>午前半休</option><option>午後半休</option></select></label></div>
+        <div class="grid2">
+          <label id="rqDateLbl">日付<input type="date" id="rqDate"></label>
+          <label id="rqEndWrap">終了日<input type="date" id="rqEndDate"></label>
+          <label id="rqOtWrap">終了予定時刻<select id="rqOtEnd"></select></label>
+        </div>
+        <div class="grid3" id="rqFix">
+          <label>出勤時刻<select id="rqStart"></select></label>
+          <label>退勤時刻<select id="rqEnd"></select></label>
+          <label>休憩<select id="rqBreak"></select></label>
+        </div>
+        <label class="field"><span class="lbl">理由<span class="req">必須</span></span><textarea id="rqNote" rows="2"></textarea></label>
+        <p class="hint" id="rqHint"></p>
+        <p class="error" id="rqError" role="alert"></p>
+        <button type="button" class="primary" id="rqBtn">申請する</button>
+      </div>
+    </section>
+    <section class="card">
+      <h2 style="margin:0 0 4px;font-size:1.0625rem">申請の一覧</h2>
+      <ol class="reqs" id="reqList"></ol>
+    </section>
+  </div>
 </div>
 
 <dialog id="pwDialog" aria-labelledby="pwTitle">
@@ -305,7 +435,8 @@ dialog h2{font-size:1.125rem;margin:0 0 16px}
   const KEY = 'blks_kintai_token';
   const PLACE_KEY = 'blks_kintai_place';
   const IN = ['出勤', '遅刻'];
-  const TONE = { '出勤': 'work', '遅刻': 'late', '欠勤': 'absent', '退勤': 'out', '早退': 'early' };
+  const TONE = { '出勤': 'work', '遅刻': 'late', '欠勤': 'absent', '退勤': 'out', '早退': 'early', '休暇': 'leave',
+    '有給休暇': 'work', '特別休暇': 'leave', '残業': 'late', '打刻修正': 'early' };
   const WD = '日月火水木金土';
   const GEO_FRESH_SEC = 120;
 
@@ -314,6 +445,9 @@ dialog h2{font-size:1.125rem;margin:0 0 16px}
     date: '', ym: '', record: null,
     inKind: null, outKind: null, openIn: false, openOut: false,
     geo: null, busy: false,
+    tab: 'punch', plan: null, balance: null, pending: 0,
+    sched: null, planYm: '', sel: new Set(), wishKind: '勤務',
+    reqs: null, rtype: null,
   };
   const $ = id => document.getElementById(id);
   let geoSeq = 0;
@@ -406,6 +540,8 @@ dialog h2{font-size:1.125rem;margin:0 0 16px}
     const breaks = [];
     for (let m = 0; m <= 240; m += 15) breaks.push(`<option value="${m}">${m}分</option>`);
     $('breakMin').innerHTML = breaks.join('');
+    ['wishStart', 'wishEnd', 'rqOtEnd', 'rqStart', 'rqEnd'].forEach(id => { $(id).innerHTML = times.join(''); });
+    ['wishBreak', 'rqBreak'].forEach(id => { $(id).innerHTML = breaks.join(''); });
   }
 
   /* ---------- 位置情報 ---------- */
@@ -474,14 +610,39 @@ dialog h2{font-size:1.125rem;margin:0 0 16px}
     $('place').innerHTML = S.places.map(p => `<option value="${esc(p)}">${esc(p)}</option>`).join('');
     $('login').hidden = true;
     $('app').hidden = false;
-    showDay(b.today, b.day);
+    S.balance = b.balance;
+    setPending(b.pending);
+    showDay(b.today, b.day, b.plan);
     renderMonth(b.month);
   }
 
+  function setPending(n) {
+    S.pending = n || 0;
+    $('reqCnt').textContent = S.pending;
+    $('reqCnt').hidden = !S.pending;
+  }
+
+  function renderPlanLine() {
+    const p = S.plan;
+    const parts = [];
+    if (p && p.shift) {
+      const sh = p.shift;
+      const label = sh.kind === '休み' ? '休み' : `${sh.pattern ? sh.pattern + ' ' : ''}${sh.start}–${sh.end}`;
+      parts.push(`<span>予定</span><b>${esc(label)}</b>${sh.state === '希望' ? '<span class="tag" data-tone="wish">希望</span>' : ''}`);
+    }
+    if (p) {
+      p.leaves.forEach(l => parts.push(`<span class="tag" data-tone="leave">${esc(l.type)}</span><span>${esc(l.unit)}・${esc(l.status)}</span>`));
+      p.overtime.forEach(o => parts.push(`<span class="tag" data-tone="late">残業</span><span>${esc(o.end)}まで・${esc(o.status)}</span>`));
+    }
+    $('planLine').innerHTML = parts.join('<span>　</span>');
+  }
+
   /* ---------- 1日分 ---------- */
-  function showDay(date, rec) {
+  function showDay(date, rec, plan) {
     S.date = date;
     S.record = rec || null;
+    S.plan = plan || null;
+    renderPlanLine();
     S.openIn = false;
     S.openOut = false;
     S.geo = null;
@@ -529,13 +690,16 @@ dialog h2{font-size:1.125rem;margin:0 0 16px}
     const past = S.date < S.today;
     const inDone = !!(r && IN.indexOf(r.inKind) >= 0);
     const absent = !!(r && r.inKind === '欠勤');
+    const leave = !!(r && r.inKind === '休暇');
     const outDone = !!(r && r.outKind);
 
     renderSummary();
+    $('inPanel').hidden = leave;
 
     // その日のお知らせ
     let msg = '';
-    if (future) msg = '先の日付は「欠勤」の事前登録だけできます。';
+    if (leave) msg = 'この日は休暇です。出勤する場合は管理者に連絡してください。';
+    else if (future) msg = '先の日付は「欠勤」の事前登録だけできます（休暇は「申請」から）。';
     else if (past && !inDone && !absent) msg = '過去の日の出勤は登録できません。必要な場合は管理者に連絡してください（欠勤の登録はできます）。';
     else if (past && inDone && !outDone) msg = 'この日は退勤が送信されていません。退勤時刻を入れて送信してください。';
     $('dayMsg').textContent = msg;
@@ -563,7 +727,7 @@ dialog h2{font-size:1.125rem;margin:0 0 16px}
     renderGeo();
 
     // 退勤パネル
-    $('outPanel').hidden = future || absent || (past && !inDone);
+    $('outPanel').hidden = future || absent || leave || (past && !inDone);
     $('outLock').hidden = inDone;
     const outBadge = $('outBadge');
     outBadge.textContent = !inDone ? '' : outDone ? `${r.outKind === '早退' ? '早退　' : ''}${r.end}　実働 ${hm(Number(r.workMin) || 0)}` : '未送信';
@@ -599,10 +763,10 @@ dialog h2{font-size:1.125rem;margin:0 0 16px}
     const box = $('daySum');
     if (!r || !r.inKind) { box.hidden = true; return; }
     box.hidden = false;
-    const absent = r.inKind === '欠勤';
+    const absent = r.inKind === '欠勤' || r.inKind === '休暇';
     $('dsInTag').textContent = r.inKind;
     $('dsInTag').dataset.tone = TONE[r.inKind];
-    $('dsInMain').textContent = absent ? `理由：${r.inNote}` : `${r.start}　${r.place}`;
+    $('dsInMain').textContent = r.inKind === '休暇' ? r.inNote : absent ? `理由：${r.inNote}` : `${r.start}　${r.place}`;
     $('dsInSub').textContent = absent ? `送信 ${fmtStamp(r.inAt)}`
       : `${isRemote(r.place) ? '位置確認なし' : `勤務地から約${fmtDist(Number(r.distance) || 0)}`}・送信 ${fmtStamp(r.inAt)}`;
     $('dsOut').hidden = !r.outKind;
@@ -640,8 +804,8 @@ dialog h2{font-size:1.125rem;margin:0 0 16px}
     if (S.busy || !date || date > S.maxDate) return;
     $('entry').classList.add('loading');
     try {
-      const rec = await api('day', { date: date });
-      showDay(date, rec);
+      const res = await api('day', { date: date });
+      showDay(date, res.record, res.plan);
       if (date.slice(0, 7) !== S.ym) renderMonth(await api('month', { ym: date.slice(0, 7) }));
     } catch (e) {
       if (!e.handled) toast(errMsg(e));
@@ -740,7 +904,7 @@ dialog h2{font-size:1.125rem;margin:0 0 16px}
     $('monthLabel').textContent = `${m.ym.slice(0, 4)}年${+m.ym.slice(5)}月の稼働`;
     $('nextMonth').disabled = m.ym >= S.maxDate.slice(0, 7);
     const c = m.counts;
-    const parts = [`実働 ${hmJa(m.totalMin)}`, `出勤 ${c.worked}日`, `遅刻 ${c.late}日`, `早退 ${c.early}日`, `欠勤 ${c.absent}日`];
+    const parts = [`実働 ${hmJa(m.totalMin)}`, `出勤 ${c.worked}日`, `遅刻 ${c.late}日`, `早退 ${c.early}日`, `欠勤 ${c.absent}日`, `休暇 ${c.leave || 0}日`];
     $('monthSummary').innerHTML = m.records.length
       ? parts.map(t => `<span>${esc(t)}</span>`).join('') + (c.noOut ? `<span class="warn">退勤未送信 ${c.noOut}日</span>` : '')
       : '';
@@ -748,7 +912,7 @@ dialog h2{font-size:1.125rem;margin:0 0 16px}
       ? m.records.map(r => {
           const chips = [r.inKind, r.outKind].filter(Boolean).map(k => `<span class="tag" data-tone="${TONE[k] || ''}">${esc(k)}</span>`).join('');
           let t = '';
-          if (r.inKind === '欠勤') t = '';
+          if (r.inKind === '欠勤' || r.inKind === '休暇') t = '';
           else if (r.start) t = `${esc(r.start)}–${esc(r.end || '')}<small>${esc(r.place)}</small>`;
           const w = r.workMin === '' || r.workMin == null ? '' : hm(Number(r.workMin));
           return `<li><button type="button" class="day" data-date="${esc(r.date)}">`
@@ -771,6 +935,189 @@ dialog h2{font-size:1.125rem;margin:0 0 16px}
     try { renderMonth(await api('month', { ym: ym })); }
     catch (e) { if (!e.handled) toast(errMsg(e)); }
     finally { $('history').classList.remove('loading'); }
+  }
+
+
+  /* ---------- タブ ---------- */
+  function showTab(tab) {
+    S.tab = tab;
+    document.querySelectorAll('.tab').forEach(b => b.setAttribute('aria-selected', String(b.dataset.tab === tab)));
+    $('viewPunch').hidden = tab !== 'punch';
+    $('viewPlan').hidden = tab !== 'plan';
+    $('viewReq').hidden = tab !== 'req';
+    if (tab === 'plan' && !S.sched) loadSchedule(S.today.slice(0, 7));
+    if (tab === 'req') loadRequests();
+    window.scrollTo({ top: 0 });
+  }
+
+  /* ---------- 予定（シフト） ---------- */
+  async function loadSchedule(ym) {
+    $('planCard').classList.add('loading');
+    try {
+      S.sched = await api('schedule', { ym: ym });
+      S.planYm = ym;
+      S.sel.clear();
+      renderSchedule();
+    } catch (e) { if (!e.handled) toast(errMsg(e)); }
+    finally { $('planCard').classList.remove('loading'); }
+  }
+
+  function shiftText(sh) {
+    if (!sh) return '';
+    return sh.kind === '休み' ? '休み' : `${sh.pattern ? sh.pattern + ' ' : ''}${sh.start}–${sh.end}`;
+  }
+
+  function editableDay(date) {
+    const sc = S.sched;
+    const sh = sc.shifts.find(x => x.date === date);
+    return date > sc.today && date <= sc.maxDate && !(sh && sh.state === '確定');
+  }
+
+  function renderSchedule() {
+    const sc = S.sched;
+    const ym = sc.ym;
+    $('planLabel').textContent = `${ym.slice(0, 4)}年${+ym.slice(5)}月の予定`;
+    $('nextPlan').disabled = ym >= sc.maxDate.slice(0, 7);
+    const y = +ym.slice(0, 4), m = +ym.slice(5);
+    const days = new Date(Date.UTC(y, m, 0)).getUTCDate();
+    const items = [];
+    for (let d = 1; d <= days; d++) {
+      const date = `${ym}-${pad(d)}`;
+      const sh = sc.shifts.find(x => x.date === date);
+      const lv = sc.leaves.filter(x => x.date === date);
+      const off = sc.workdays.indexOf(wd(date)) < 0;
+      let v = '';
+      if (sh) v += `<span class="tag" data-tone="${sh.state === '確定' ? 'fixed' : 'wish'}">${sh.state}</span><span>${esc(shiftText(sh))}</span>${sh.note ? `<small>${esc(sh.note)}</small>` : ''}`;
+      lv.forEach(l => { v += `<span class="tag" data-tone="leave">${esc(l.type)}</span><small>${esc(l.unit)}・${esc(l.status)}</small>`; });
+      if (!v) v = `<small>${off ? '勤務曜日外' : '—'}</small>`;
+      const can = editableDay(date);
+      items.push(`<li><button type="button" class="pday${off ? ' off' : ''}" data-date="${date}" aria-pressed="${S.sel.has(date)}" ${can ? '' : 'disabled'}>`
+        + `<span class="ck">✓</span><span class="pd">${md(date)}（${wd(date)}）</span><span class="pv">${v}</span></button></li>`);
+    }
+    $('planList').innerHTML = items.join('');
+    $('wishPattern').innerHTML = sc.patterns.map(p => `<option value="${esc(p.name)}">${esc(p.name)}（${p.start}–${p.end}）</option>`).join('')
+      + '<option value="">時間を指定する</option>';
+    renderWishEditor();
+  }
+
+  function renderWishEditor() {
+    const n = S.sel.size;
+    $('wishEditor').hidden = !n;
+    if (!n) return;
+    const list = [...S.sel].sort().map(d => md(d));
+    $('wishCount').textContent = `選んだ日：${n}日（${list.slice(0, 6).join('、')}${n > 6 ? ' ほか' : ''}）`;
+    document.querySelectorAll('[data-wk]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.wk === S.wishKind)));
+    $('wishWork').hidden = S.wishKind !== '勤務';
+    $('wishTimes').hidden = $('wishPattern').value !== '';
+    $('wishNoteWrap').hidden = S.wishKind === '';
+    $('wishBtn').textContent = S.wishKind === '' ? '希望を取り消す' : '希望を送信';
+  }
+
+  async function submitWish() {
+    const err = $('wishError');
+    err.textContent = '';
+    const kind = S.wishKind;
+    const pattern = $('wishPattern').value;
+    const base = { kind: kind, note: $('wishNote').value.trim() };
+    if (kind === '勤務') {
+      if (pattern) base.pattern = pattern;
+      else {
+        Object.assign(base, { start: $('wishStart').value, end: $('wishEnd').value, breakMin: Number($('wishBreak').value) || 0 });
+        if (!base.start || !base.end) { err.textContent = '開始時刻と終了時刻を選んでください。'; return; }
+      }
+    }
+    const entries = [...S.sel].sort().map(date => Object.assign({ date: date }, base));
+    $('wishBtn').disabled = true;
+    try {
+      const res = await api('shiftWish', { entries: entries });
+      S.sched = res.schedule;
+      S.sel.clear();
+      $('wishNote').value = '';
+      renderSchedule();
+      toast(res.locked.length ? `${res.changed}日分を送信しました（確定済みの${res.locked.length}日は変更していません）。` : `${res.changed}日分の希望を送信しました。`);
+    } catch (e) { if (!e.handled) err.textContent = errMsg(e); }
+    finally { $('wishBtn').disabled = false; }
+  }
+
+  /* ---------- 申請 ---------- */
+  async function loadRequests() {
+    try {
+      const data = await api('requests');
+      renderRequests(data);
+    } catch (e) { if (!e.handled) toast(errMsg(e)); }
+  }
+
+  const fmtDays = n => (Math.round(n * 10) / 10).toString();
+
+  function renderRequests(data) {
+    S.reqs = data;
+    S.balance = data.balance;
+    const b = data.balance;
+    $('balRemain').textContent = `${fmtDays(b.remaining)}日`;
+    const sub = [`付与 ${fmtDays(b.granted)}日・取得 ${fmtDays(b.used)}日`];
+    if (b.pending) sub.push(`申請中 ${fmtDays(b.pending)}日`);
+    if (b.nextExpire) sub.push(`${b.nextExpire.date.replace(/-/g, '/')}に${fmtDays(b.nextExpire.days)}日が失効予定`);
+    $('balSub').textContent = sub.join('　');
+    ['rqDate', 'rqEndDate'].forEach(id => { $(id).min = data.minDate; $(id).max = data.maxDate; });
+    setPending(data.requests.filter(r => r.status === '申請中').length);
+    $('reqList').innerHTML = data.requests.length ? data.requests.map(r => `<li>
+      <div class="rq-h"><span class="tag" data-tone="${TONE[r.type] || ''}">${esc(r.type)}</span><span class="stt s-${esc(r.status)}">${esc(r.status)}</span></div>
+      <div class="rq-b">${esc(r.label)}</div>
+      <div class="rq-n">理由：${esc(r.note)}</div>
+      ${r.comment ? `<div class="rq-c">管理者：${esc(r.comment)}</div>` : ''}
+      <div class="rq-f"><span>申請 ${fmtStamp(r.appliedAt)}</span>${r.status === '申請中' ? `<button type="button" class="link" data-cancel="${esc(r.id)}">取り消す</button>` : ''}</div>
+    </li>`).join('') : '<li class="empty">まだ申請はありません。</li>';
+    renderReqForm();
+  }
+
+  function renderReqForm() {
+    const t = S.rtype;
+    document.querySelectorAll('[data-rtype]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.rtype === t)));
+    $('rqFields').hidden = !t;
+    if (!t) return;
+    const leave = t === '有給休暇' || t === '特別休暇';
+    $('rqLeave').hidden = !leave;
+    $('rqEndWrap').hidden = !(leave && $('rqUnit').value === '全日');
+    $('rqOtWrap').hidden = t !== '残業';
+    $('rqFix').hidden = t !== '打刻修正';
+    $('rqDateLbl').firstChild.textContent = leave && $('rqUnit').value === '全日' ? '開始日' : '日付';
+    const hints = {
+      '有給休暇': `残り${S.balance ? fmtDays(S.balance.remaining - S.balance.pending) : '—'}日（申請中を除く）。全日は期間内の勤務日だけを数えます（祝日・休業日・勤務曜日外は除外）。`,
+      '特別休暇': '慶弔休暇など。日数の上限は管理者が確認します。',
+      '残業': '終了予定時刻を選んでください。7日前までの事後申請もできます。',
+      '打刻修正': '承認されると、その日の出勤・退勤時刻が申請どおりに直ります（位置確認なし）。',
+    };
+    $('rqHint').textContent = hints[t];
+    $('rqBtn').textContent = `${t}を申請する`;
+  }
+
+  async function submitRequest() {
+    const err = $('rqError');
+    err.textContent = '';
+    const t = S.rtype;
+    const entry = { type: t, date: $('rqDate').value, note: $('rqNote').value.trim() };
+    if (!entry.date) { err.textContent = '日付を選んでください。'; return; }
+    if (!entry.note) { err.textContent = '理由を入力してください。'; $('rqNote').focus(); return; }
+    if (t === '有給休暇' || t === '特別休暇') {
+      entry.unit = $('rqUnit').value;
+      if (entry.unit === '全日') entry.endDate = $('rqEndDate').value || entry.date;
+    } else if (t === '残業') {
+      entry.end = $('rqOtEnd').value;
+      if (!entry.end) { err.textContent = '終了予定時刻を選んでください。'; return; }
+    } else {
+      Object.assign(entry, { start: $('rqStart').value, end: $('rqEnd').value, breakMin: Number($('rqBreak').value) || 0 });
+      if (!entry.start) { err.textContent = '正しい出勤時刻を選んでください。'; return; }
+    }
+    $('rqBtn').disabled = true;
+    try {
+      const data = await api('request', { entry: entry });
+      $('rqNote').value = '';
+      S.rtype = null;
+      renderRequests(data);
+      toast(`${t}を申請しました。結果はメールでお知らせします。`);
+      window.scrollTo({ top: document.getElementById('reqList').offsetTop - 80, behavior: 'smooth' });
+    } catch (e) { if (!e.handled) err.textContent = errMsg(e); }
+    finally { $('rqBtn').disabled = false; }
   }
 
   /* ---------- イベント ---------- */
@@ -820,6 +1167,39 @@ dialog h2{font-size:1.125rem;margin:0 0 16px}
   $('dateInput').addEventListener('change', e => { if (e.target.value) goDay(e.target.value); });
   $('dateInput').addEventListener('click', e => { try { e.target.showPicker(); } catch (err) {} });
 
+
+  document.querySelectorAll('.tab').forEach(b => b.addEventListener('click', () => showTab(b.dataset.tab)));
+  $('prevPlan').addEventListener('click', () => loadSchedule(shiftMonth(S.planYm, -1)));
+  $('nextPlan').addEventListener('click', () => loadSchedule(shiftMonth(S.planYm, 1)));
+  $('planList').addEventListener('click', e => {
+    const b = e.target.closest('.pday');
+    if (!b || b.disabled) return;
+    const d = b.dataset.date;
+    if (S.sel.has(d)) S.sel.delete(d); else S.sel.add(d);
+    b.setAttribute('aria-pressed', String(S.sel.has(d)));
+    $('wishError').textContent = '';
+    renderWishEditor();
+  });
+  $('wishClear').addEventListener('click', () => { S.sel.clear(); renderSchedule(); });
+  document.querySelectorAll('[data-wk]').forEach(b => b.addEventListener('click', () => { S.wishKind = b.dataset.wk; renderWishEditor(); }));
+  $('wishPattern').addEventListener('change', renderWishEditor);
+  $('wishBtn').addEventListener('click', submitWish);
+
+  document.querySelectorAll('[data-rtype]').forEach(b => b.addEventListener('click', () => {
+    S.rtype = b.dataset.rtype;
+    $('rqError').textContent = '';
+    if (!$('rqDate').value) $('rqDate').value = S.rtype === '打刻修正' ? addDays(S.today, -1) : S.today;
+    renderReqForm();
+  }));
+  $('rqUnit').addEventListener('change', renderReqForm);
+  $('rqBtn').addEventListener('click', submitRequest);
+  $('reqList').addEventListener('click', async e => {
+    const b = e.target.closest('[data-cancel]');
+    if (!b) return;
+    b.disabled = true;
+    try { renderRequests(await api('cancelRequest', { id: b.dataset.cancel })); toast('申請を取り消しました。'); }
+    catch (err) { if (!err.handled) toast(errMsg(err)); b.disabled = false; }
+  });
   $('prevMonth').addEventListener('click', () => loadMonth(shiftMonth(S.ym, -1)));
   $('nextMonth').addEventListener('click', () => loadMonth(shiftMonth(S.ym, 1)));
   $('monthList').addEventListener('click', e => {
